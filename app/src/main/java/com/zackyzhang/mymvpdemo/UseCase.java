@@ -28,6 +28,12 @@ public abstract class UseCase<T, Params> {
         addDisposable(observable.subscribeWith(observer));
     }
 
+    public void dispose() {
+        if (!mDisposables.isDisposed()) {
+            mDisposables.dispose();
+        }
+    }
+
     private void addDisposable(Disposable disposable) {
         mDisposables.add(disposable);
     }

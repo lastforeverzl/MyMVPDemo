@@ -41,6 +41,7 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
 
     @Override
     public void destroy() {
+        mGetMovieListCase.dispose();
         mMovieListView = null;
     }
 
