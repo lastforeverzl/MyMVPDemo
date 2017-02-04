@@ -16,12 +16,6 @@ import retrofit2.http.Query;
 
 public interface MoviesService {
 
-//    @GET("movie/now_playing")
-//    Call<NowPlayingResult<List<NowPlayingMovie>>> movieList(@Query("api_key") String apiKey,
-//                                                            @Query("language") String language,
-//                                                            @Query("page") int page,
-//                                                            @Query("region") String region);
-
     @GET("movie/now_playing")
     Observable<NowPlayingResult<List<NowPlayingMovie>>> movieList(@Query("api_key") String apiKey,
                                                                   @Query("language") String language,
