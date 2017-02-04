@@ -11,13 +11,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
-        <activity android:name=".mvp.view.MainActivity">
+        <activity android:name=".mvp.view.activity.MainActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".mvp.view.activity.MovieListActivity"
+            android:label="@string/activity_title_movie_list">
+
+        </activity>
+
     </application>
 
 </manifest>

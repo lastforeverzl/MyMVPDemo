@@ -8,9 +8,9 @@ import com.zackyzhang.mymvpdemo.di.module.ApplicationModule;
 import com.zackyzhang.mymvpdemo.di.ApplicationContext;
 import com.zackyzhang.mymvpdemo.di.module.MoviesServiceModule;
 import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
+import com.zackyzhang.mymvpdemo.mvp.view.activity.BaseActivity;
 
 import dagger.Component;
-import retrofit2.Retrofit;
 
 /**
  * Created by lei on 1/30/17.
@@ -18,6 +18,7 @@ import retrofit2.Retrofit;
 @ApplicationScope
 @Component(modules = {ApplicationModule.class, MoviesServiceModule.class})
 public interface ApplicationComponent {
+    void inject(BaseActivity baseActivity);
 
     @ApplicationContext
     Context getApplicationContext();

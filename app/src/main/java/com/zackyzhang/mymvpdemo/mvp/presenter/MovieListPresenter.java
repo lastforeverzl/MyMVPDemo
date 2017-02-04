@@ -1,39 +1,82 @@
 package com.zackyzhang.mymvpdemo.mvp.presenter;
 
-import android.util.Log;
-
-import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.data.MoviesService;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingResult;
-import com.zackyzhang.mymvpdemo.mvp.MainView;
+import com.zackyzhang.mymvpdemo.mvp.MovieListView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by lei on 2/1/17.
  */
 
-public class MoviesPresenter extends BasePresenter<MainView> implements Observer<List<NowPlayingMovie>>{
+public class MovieListPresenter implements Presenter<MovieListView>, Observer<List<NowPlayingMovie>>{
 
+    private MovieListView mMovieListView;
     private MoviesService mMoviesService;
 
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void destroy() {
+        mMovieListView = null;
+    }
+
     @Inject
-    public MoviesPresenter(MoviesService moviesService) {
+    public MovieListPresenter(MoviesService moviesService) {
         this.mMoviesService = moviesService;
     }
 
+    @Override
+    public void setView(MovieListView view) {
+        mMovieListView = view;
+    }
+
+    private void showViewLoading() {
+        mMovieListView.showLoadingDialog();
+    }
+
+    private void hideViewLoading() {
+        mMovieListView.hideLoadingDialog();
+    }
+
+    private void showToastMessage(String message) {
+        mMovieListView.showError(message);
+    }
+
+    private void showMovieListInView(List<NowPlayingMovie> movieList) {
+        mMovieListView.loadMovieList(movieList);
+    }
+
+    /**
+     *  Retrieving the movie list
+     */
+    public void initialize() {
+        this.showViewLoading();
+        this.getMovies();
+    }
+
+    // TODO: 2/3/17 encapsulate Rxjava...
     public void getMovies() {
-        getView().onShowDialog("Loading...");
         Observable<List<NowPlayingMovie>> observable = mMoviesService.movieList(Constants.KEY_API, "en-US", 1, "")
                 .map(new Function<NowPlayingResult<List<NowPlayingMovie>>, List<NowPlayingMovie>>() {
                     @Override
@@ -50,7 +93,11 @@ public class MoviesPresenter extends BasePresenter<MainView> implements Observer
 //                    }
 //                });
         subscribe(observable, this);
-
+    }
+    protected  <T> void subscribe(Observable<T> observable, Observer<T> observer) {
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override
@@ -60,18 +107,18 @@ public class MoviesPresenter extends BasePresenter<MainView> implements Observer
 
     @Override
     public void onNext(List<NowPlayingMovie> nowPlayingMovies) {
-        getView().onMovieLoaded(nowPlayingMovies);
+        this.showMovieListInView(nowPlayingMovies);
     }
 
     @Override
     public void onError(Throwable e) {
-        getView().onHideDialog();
-        getView().onShowToast("Error in loading " + e.getMessage());
+        this.hideViewLoading();
+        this.showToastMessage("Error in loading " + e.getMessage());
     }
 
     @Override
     public void onComplete() {
-        getView().onHideDialog();
-        getView().onShowToast("Get Movie completed");
+        this.hideViewLoading();
+        this.showToastMessage("Get Movie completed");
     }
 }

@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 /**
  * Created by lei on 2/1/17.
  */
-
+// TODO: 2/3/17 need to take a look at adapter.
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
     private LayoutInflater mLayoutInflater;

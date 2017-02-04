@@ -27,7 +27,6 @@ public class MyApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .moviesServiceModule(new MoviesServiceModule())
                 .build();
-
     }
 
     public ApplicationComponent getComponent() {

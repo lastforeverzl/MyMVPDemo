@@ -13,9 +13,11 @@ import io.reactivex.schedulers.Schedulers;
  * Created by lei on 2/1/17.
  */
 
+
+// TODO: 2/3/17 can be deleted
 public class BasePresenter<V extends BaseView> {
 
-    @Inject protected V mView;
+    protected V mView;
 
     protected V getView() {
         return mView;
