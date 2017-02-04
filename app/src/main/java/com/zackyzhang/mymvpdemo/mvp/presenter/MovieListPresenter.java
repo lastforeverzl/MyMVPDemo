@@ -1,10 +1,12 @@
 package com.zackyzhang.mymvpdemo.mvp.presenter;
 
 import com.zackyzhang.mymvpdemo.Constants;
+import com.zackyzhang.mymvpdemo.GetMovieList;
 import com.zackyzhang.mymvpdemo.data.MoviesService;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingResult;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
+import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieListFragment;
 
 import java.util.List;
 
@@ -15,16 +17,17 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by lei on 2/1/17.
  */
 
-public class MovieListPresenter implements Presenter<MovieListView>, Observer<List<NowPlayingMovie>>{
+public class MovieListPresenter implements Presenter<MovieListView>  {
 
     private MovieListView mMovieListView;
-    private MoviesService mMoviesService;
+    private GetMovieList mGetMovieListCase;
 
     @Override
     public void resume() {
@@ -42,8 +45,8 @@ public class MovieListPresenter implements Presenter<MovieListView>, Observer<Li
     }
 
     @Inject
-    public MovieListPresenter(MoviesService moviesService) {
-        this.mMoviesService = moviesService;
+    public MovieListPresenter(GetMovieList getMovieListCase) {
+        mGetMovieListCase = getMovieListCase;
     }
 
     @Override
@@ -75,50 +78,28 @@ public class MovieListPresenter implements Presenter<MovieListView>, Observer<Li
         this.getMovies();
     }
 
-    // TODO: 2/3/17 encapsulate Rxjava...
     public void getMovies() {
-        Observable<List<NowPlayingMovie>> observable = mMoviesService.movieList(Constants.KEY_API, "en-US", 1, "")
-                .map(new Function<NowPlayingResult<List<NowPlayingMovie>>, List<NowPlayingMovie>>() {
-                    @Override
-                    public List<NowPlayingMovie> apply(NowPlayingResult<List<NowPlayingMovie>> listNowPlayingResult)
-                            throws Exception {
-                        return listNowPlayingResult.getResults();
-                    }
-                });
-//        Observable<NowPlayingMovie> observable1 = observable
-//                .flatMap(new Function<List<NowPlayingMovie>, ObservableSource<NowPlayingMovie>>() {
-//                    @Override
-//                    public ObservableSource<NowPlayingMovie> apply(List<NowPlayingMovie> nowPlayingMovies) throws Exception {
-//                        return Observable.fromIterable(nowPlayingMovies);
-//                    }
-//                });
-        subscribe(observable, this);
-    }
-    protected  <T> void subscribe(Observable<T> observable, Observer<T> observer) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    @Override
-    public void onSubscribe(Disposable d) {
+        mGetMovieListCase.execute(new MovieListObserver(), null);
 
     }
 
-    @Override
-    public void onNext(List<NowPlayingMovie> nowPlayingMovies) {
-        this.showMovieListInView(nowPlayingMovies);
-    }
+    private final class MovieListObserver extends DisposableObserver<List<NowPlayingMovie>> {
 
-    @Override
-    public void onError(Throwable e) {
-        this.hideViewLoading();
-        this.showToastMessage("Error in loading " + e.getMessage());
-    }
+        @Override
+        public void onNext(List<NowPlayingMovie> nowPlayingMovies) {
+            MovieListPresenter.this.showMovieListInView(nowPlayingMovies);
+        }
 
-    @Override
-    public void onComplete() {
-        this.hideViewLoading();
-        this.showToastMessage("Get Movie completed");
+        @Override
+        public void onError(Throwable e) {
+            MovieListPresenter.this.hideViewLoading();
+            MovieListPresenter.this.showToastMessage("Error in loading " + e.getMessage());
+        }
+
+        @Override
+        public void onComplete() {
+            MovieListPresenter.this.hideViewLoading();
+            MovieListPresenter.this.showToastMessage("Get Movie completed");
+        }
     }
 }
