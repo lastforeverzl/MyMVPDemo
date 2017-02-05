@@ -37,9 +37,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
     @Inject
     public MovieAdapter(Context context, Picasso picasso) {
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-
-//        mLayoutInflater = inflater;
         mPicasso = picasso;
     }
 
