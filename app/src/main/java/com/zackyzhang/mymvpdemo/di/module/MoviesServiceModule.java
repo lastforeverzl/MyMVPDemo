@@ -13,6 +13,8 @@ import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
@@ -33,13 +35,13 @@ public class MoviesServiceModule {
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     MoviesService provideMoviesService(Retrofit moviesRetrofit) {
         return moviesRetrofit.create(MoviesService.class);
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     HttpLoggingInterceptor provideLoggingInterceptor() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
@@ -52,8 +54,8 @@ public class MoviesServiceModule {
     }
 
     @Provides
-    @ApplicationScope
-    Cache provideHttpCache(@ApplicationContext Context context) {
+    @Singleton
+    Cache provideHttpCache(Context context) {
         int cacheSize = 10 * 1000 * 1000;
         Log.d("DIR", String.valueOf(context.getApplicationContext().getCacheDir()));
         Cache cache = new Cache(context.getApplicationContext().getCacheDir(), cacheSize);
@@ -61,7 +63,7 @@ public class MoviesServiceModule {
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     OkHttpClient provideOkHttpClient(HttpLoggingInterceptor httpLoggingInterceptor, Cache cache) {
             return new OkHttpClient.Builder()
                     .addInterceptor(httpLoggingInterceptor)
@@ -72,19 +74,19 @@ public class MoviesServiceModule {
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     GsonConverterFactory provideGsonConverterFactory() {
         return GsonConverterFactory.create();
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     RxJava2CallAdapterFactory provideRxJava2CallAdapterFactory() {
         return RxJava2CallAdapterFactory.create();
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     Retrofit provideRetrofit(OkHttpClient okHttpClient, GsonConverterFactory gsonConverterFactory, RxJava2CallAdapterFactory rxJava2CallAdapterFactory) {
         return new Retrofit.Builder()
                 .addConverterFactory(gsonConverterFactory)
@@ -95,14 +97,14 @@ public class MoviesServiceModule {
     }
 
     @Provides
-    @ApplicationScope
+    @Singleton
     OkHttp3Downloader provideOkHttp3Downloader(OkHttpClient okHttpClient) {
         return new OkHttp3Downloader(okHttpClient);
     }
 
     @Provides
-    @ApplicationScope
-    Picasso providePicasso(@ApplicationContext Context context, OkHttp3Downloader okHttp3Downloader) {
+    @Singleton
+    Picasso providePicasso(Context context, OkHttp3Downloader okHttp3Downloader) {
         return new Picasso.Builder(context)
                 .downloader(okHttp3Downloader)
                 .build();

@@ -4,6 +4,8 @@ import android.content.Context;
 import com.zackyzhang.mymvpdemo.di.ApplicationContext;
 import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -21,8 +23,7 @@ public class ApplicationModule {
     }
 
     @Provides
-    @ApplicationScope
-    @ApplicationContext
+    @Singleton
     Context context() {
         return this.mContext;
     }

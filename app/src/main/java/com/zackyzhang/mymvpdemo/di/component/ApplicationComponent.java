@@ -10,17 +10,18 @@ import com.zackyzhang.mymvpdemo.di.module.MoviesServiceModule;
 import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.BaseActivity;
 
+import javax.inject.Singleton;
+
 import dagger.Component;
 
 /**
  * Created by lei on 1/30/17.
  */
-@ApplicationScope
+@Singleton
 @Component(modules = {ApplicationModule.class, MoviesServiceModule.class})
 public interface ApplicationComponent {
     void inject(BaseActivity baseActivity);
 
-    @ApplicationContext
     Context getApplicationContext();
 
     MoviesService getMoviesService();

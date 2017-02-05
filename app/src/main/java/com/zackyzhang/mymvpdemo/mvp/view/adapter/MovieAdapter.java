@@ -3,7 +3,11 @@ package com.zackyzhang.mymvpdemo.mvp.view.adapter;
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
+
+import android.content.Context;
+import android.graphics.LightingColorFilter;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,8 @@ import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,8 +34,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
     private List<NowPlayingMovie> mMovieList = new ArrayList<>();
     private Picasso mPicasso;
 
-    public MovieAdapter(LayoutInflater inflater, Picasso picasso) {
-        mLayoutInflater = inflater;
+    @Inject
+    public MovieAdapter(Context context, Picasso picasso) {
+        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
+//        mLayoutInflater = inflater;
         mPicasso = picasso;
     }
 
@@ -68,6 +78,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
         public void bind(NowPlayingMovie movie) {
             mMovie = movie;
+            Log.d("Adapter", mMovie.getOriginalTitle());
             mTitle.setText(mMovie.getOriginalTitle());
             mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
                     .into(mMovieIcon);

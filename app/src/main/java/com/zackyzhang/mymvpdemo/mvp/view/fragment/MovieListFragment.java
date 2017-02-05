@@ -1,5 +1,6 @@
 package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
+import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
 import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
 import com.zackyzhang.mymvpdemo.mvp.view.adapter.MovieAdapter;
@@ -46,8 +48,11 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Inject
     protected MovieListPresenter mMovieListPresenter;
 
+
     // TODO: 2/3/17 inject MovieAdapter fron Dagger
-    private MovieAdapter mMovieAdapter;
+//    private MovieAdapter mMovieAdapter;
+    @Inject
+    protected MovieAdapter mMovieAdapter;
 
     private MovieListListener mMovieListListener;
 
@@ -75,7 +80,6 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         this.getComponent(MoviesComponent.class).inject(this);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View fragmentView = inflater.inflate(R.layout.fragment_movie_list, container, false);
@@ -165,7 +169,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context()));
         Log.d("Picasso in fragment", mPicasso.toString());
-        mMovieAdapter = new MovieAdapter(getActivity().getLayoutInflater(), mPicasso);
+//        mMovieAdapter = new MovieAdapter(getActivity().getLayoutInflater(), mPicasso);
         recyclerView.setAdapter(mMovieAdapter);
     }
 

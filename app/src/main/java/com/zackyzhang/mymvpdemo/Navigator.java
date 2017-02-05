@@ -13,7 +13,7 @@ import javax.inject.Singleton;
  * Created by lei on 2/2/17.
  * Class used to navigate through the application.
  */
-@ApplicationScope
+@Singleton
 public class Navigator {
 
     @Inject

@@ -1,33 +1,38 @@
 package com.zackyzhang.mymvpdemo.mvp.presenter;
 
+import android.support.annotation.NonNull;
+
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.GetMovieList;
 import com.zackyzhang.mymvpdemo.data.MoviesService;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
-import com.zackyzhang.mymvpdemo.data.entity.NowPlayingResult;
+import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
-import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieListFragment;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by lei on 2/1/17.
  */
-
+@PerActivity
 public class MovieListPresenter implements Presenter<MovieListView>  {
 
     private MovieListView mMovieListView;
     private GetMovieList mGetMovieListCase;
+
+    @Inject
+    public MovieListPresenter(GetMovieList getMovieListCase) {
+        mGetMovieListCase = getMovieListCase;
+    }
+
+    @Override
+    public void setView(@NonNull MovieListView view) {
+        mMovieListView = view;
+    }
 
     @Override
     public void resume() {
@@ -43,16 +48,6 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
     public void destroy() {
         mGetMovieListCase.dispose();
         mMovieListView = null;
-    }
-
-    @Inject
-    public MovieListPresenter(GetMovieList getMovieListCase) {
-        mGetMovieListCase = getMovieListCase;
-    }
-
-    @Override
-    public void setView(MovieListView view) {
-        mMovieListView = view;
     }
 
     private void showViewLoading() {

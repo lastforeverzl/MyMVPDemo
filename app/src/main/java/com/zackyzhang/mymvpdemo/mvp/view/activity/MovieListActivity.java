@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.zackyzhang.mymvpdemo.R;
@@ -25,7 +26,7 @@ public class MovieListActivity extends BaseActivity implements HasComponent<Movi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
 
         this.resolveDaggerDependency();

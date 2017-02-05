@@ -25,16 +25,12 @@ public abstract class UseCase<T, Params> {
         final Observable<T> observable = this.buildUseCaseObservable(params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        addDisposable(observable.subscribeWith(observer));
+        mDisposables.add(observable.subscribeWith(observer));
     }
 
     public void dispose() {
         if (!mDisposables.isDisposed()) {
             mDisposables.dispose();
         }
-    }
-
-    private void addDisposable(Disposable disposable) {
-        mDisposables.add(disposable);
     }
 }
