@@ -78,7 +78,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
             mMovie = movie;
             mTitle.setText(mMovie.getOriginalTitle());
             if (mMovie.getPosterPath() == null) {
-                mPicasso.load(R.mipmap.darthvader_icon).into(mMovieIcon);
+                mPicasso.load(Constants.IMAGE_PLACEHOLDER).into(mMovieIcon);
             } else {
             mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
                     .into(mMovieIcon);
