@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by lei on 2/1/17.
@@ -75,10 +76,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
         public void bind(NowPlayingMovie movie) {
             mMovie = movie;
-            Log.d("Adapter", mMovie.getOriginalTitle());
             mTitle.setText(mMovie.getOriginalTitle());
+            if (mMovie.getPosterPath() == null) {
+                mPicasso.load(R.mipmap.darthvader_icon).into(mMovieIcon);
+            } else {
             mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
                     .into(mMovieIcon);
+            }
 
         }
     }

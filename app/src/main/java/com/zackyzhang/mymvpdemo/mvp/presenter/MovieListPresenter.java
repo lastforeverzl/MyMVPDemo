@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.observers.DisposableObserver;
+import timber.log.Timber;
 
 /**
  * Created by lei on 2/1/17.
@@ -23,6 +24,9 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
 
     private MovieListView mMovieListView;
     private GetMovieList mGetMovieListCase;
+
+    private int currentPage = 1;
+    private boolean isLastPage = false;
 
     @Inject
     public MovieListPresenter(GetMovieList getMovieListCase) {
@@ -62,8 +66,8 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
         mMovieListView.showError(message);
     }
 
-    private void showMovieListInView(List<NowPlayingMovie> movieList) {
-        mMovieListView.loadMovieList(movieList);
+    private void showMovieListInView(List<NowPlayingMovie> movieList, boolean isLastPage) {
+        mMovieListView.loadMovieList(movieList, isLastPage);
     }
 
     /**
@@ -74,8 +78,13 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
         this.getMovies();
     }
 
+    public void getMoreMovies() {
+        this.showViewLoading();
+        mGetMovieListCase.execute(new MovieListObserver(), GetMovieList.Params.forPage(++currentPage));
+    }
+
     public void getMovies() {
-        mGetMovieListCase.execute(new MovieListObserver(), null);
+        mGetMovieListCase.execute(new MovieListObserver(), GetMovieList.Params.forPage(currentPage));
 
     }
 
@@ -83,7 +92,10 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
 
         @Override
         public void onNext(List<NowPlayingMovie> nowPlayingMovies) {
-            MovieListPresenter.this.showMovieListInView(nowPlayingMovies);
+            if (nowPlayingMovies.size() == 0) {
+                isLastPage = true;
+            }
+            MovieListPresenter.this.showMovieListInView(nowPlayingMovies, isLastPage);
         }
 
         @Override

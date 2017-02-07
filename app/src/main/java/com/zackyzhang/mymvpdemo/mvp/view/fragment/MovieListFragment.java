@@ -1,10 +1,7 @@
 package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,18 +14,19 @@ import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
-import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
 import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
 import com.zackyzhang.mymvpdemo.mvp.view.adapter.MovieAdapter;
 
 import java.util.List;
+import java.util.Timer;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 /**
  * Created by lei on 2/2/17.
@@ -39,7 +37,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     private final String TAG = "MovieListFragment";
 
     @BindView(R.id.movie_list)
-    RecyclerView recyclerView;
+    RecyclerView mRecyclerView;
     @BindView(R.id.layout_progress)
     RelativeLayout progress;
 
@@ -47,16 +45,13 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     protected Picasso mPicasso;
     @Inject
     protected MovieListPresenter mMovieListPresenter;
-
-
-    // TODO: 2/3/17 inject MovieAdapter fron Dagger
-//    private MovieAdapter mMovieAdapter;
     @Inject
     protected MovieAdapter mMovieAdapter;
 
     private MovieListListener mMovieListListener;
-
     private Unbinder unbinder;
+    private boolean isLoadingMore = false;
+    private boolean isLastPage = false;
 
     public MovieListFragment() {
         setRetainInstance(true);
@@ -96,6 +91,21 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
             loadMovies();
             Log.d(TAG, "movies loaded!");
         }
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastVisibleItem = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
+                int totalItemCount = mRecyclerView.getLayoutManager().getItemCount();
+                if (lastVisibleItem >= totalItemCount - 2 && dy > 0 && !isLastPage) {
+                    if (!isLoadingMore) {
+                        isLoadingMore = true;
+                        mMovieListPresenter.getMoreMovies();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -113,7 +123,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        recyclerView.setAdapter(null);
+        mRecyclerView.setAdapter(null);
         unbinder.unbind();
     }
 
@@ -139,9 +149,16 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
      * @param movies
      */
     @Override
-    public void loadMovieList(List<NowPlayingMovie> movies) {
+    public void loadMovieList(List<NowPlayingMovie> movies, boolean isLastPage) {
+        if (isLastPage) {
+            this.isLastPage = true;
+            this.isLoadingMore = false;
+            showError("END");
+            return;
+        }
         if (movies != null) {
             mMovieAdapter.loadMovies(movies);
+            isLoadingMore = false;
         }
     }
 
@@ -166,11 +183,10 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     }
 
     private void setupRecyclerView() {
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context()));
-        Log.d("Picasso in fragment", mPicasso.toString());
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
 //        mMovieAdapter = new MovieAdapter(getActivity().getLayoutInflater(), mPicasso);
-        recyclerView.setAdapter(mMovieAdapter);
+        mRecyclerView.setAdapter(mMovieAdapter);
     }
 
     private void loadMovies() {
