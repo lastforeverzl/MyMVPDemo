@@ -10,7 +10,7 @@ public class Constants {
 
     public static final String MOVIE_DOMAIN = "https://api.themoviedb.org/3/";
 
-    public static final String IMAGE_DOMAIN = "https://image.tmdb.org/t/p/w45/";
+    public static final String IMAGE_DOMAIN = "https://image.tmdb.org/t/p/w500/";
 
     public static final int IMAGE_PLACEHOLDER = R.mipmap.darthvader_icon;
 }

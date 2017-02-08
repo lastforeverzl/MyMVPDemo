@@ -77,11 +77,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
         public void bind(NowPlayingMovie movie) {
             mMovie = movie;
             mTitle.setText(mMovie.getOriginalTitle());
-            if (mMovie.getPosterPath() == null) {
-                mPicasso.load(Constants.IMAGE_PLACEHOLDER).into(mMovieIcon);
+            if (mMovie.getPosterPath().isEmpty()) {
+                mPicasso.load(Constants.IMAGE_PLACEHOLDER)
+                        .priority(Picasso.Priority.HIGH)
+                        .fit()
+                        .placeholder(Constants.IMAGE_PLACEHOLDER)
+                        .into(mMovieIcon);
             } else {
-            mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
-                    .into(mMovieIcon);
+                mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
+                        .placeholder(Constants.IMAGE_PLACEHOLDER)
+                        .error(Constants.IMAGE_PLACEHOLDER)
+                        .into(mMovieIcon);
             }
 
         }

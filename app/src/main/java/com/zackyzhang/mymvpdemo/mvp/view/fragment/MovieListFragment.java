@@ -2,6 +2,7 @@ package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
@@ -17,12 +17,8 @@ import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
 import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
 import com.zackyzhang.mymvpdemo.mvp.view.adapter.MovieAdapter;
-
 import java.util.List;
-import java.util.Timer;
-
 import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -184,7 +180,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
 
     private void setupRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
 //        mMovieAdapter = new MovieAdapter(getActivity().getLayoutInflater(), mPicasso);
         mRecyclerView.setAdapter(mMovieAdapter);
     }
