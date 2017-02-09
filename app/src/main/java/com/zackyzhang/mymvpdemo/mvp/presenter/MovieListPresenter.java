@@ -88,6 +88,10 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
 
     }
 
+    public void onMovieClicked(NowPlayingMovie movie) {
+        mMovieListView.viewMovie(movie);
+    }
+
     private final class MovieListObserver extends DisposableObserver<List<NowPlayingMovie>> {
 
         @Override

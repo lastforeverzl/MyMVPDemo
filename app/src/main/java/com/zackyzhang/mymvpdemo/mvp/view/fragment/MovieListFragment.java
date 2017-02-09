@@ -54,7 +54,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     }
 
     public interface MovieListListener {
-        void onMovieListClicked(final NowPlayingMovie movie);
+        void onMovieClicked(final NowPlayingMovie movie);
     }
 
     @Override
@@ -159,6 +159,13 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     }
 
     @Override
+    public void viewMovie(NowPlayingMovie movie) {
+        if (this.mMovieListListener != null) {
+            mMovieListListener.onMovieClicked(movie);
+        }
+    }
+
+    @Override
     public void showLoadingDialog() {
         progress.setVisibility(View.VISIBLE);
     }
@@ -180,11 +187,21 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
 
     private void setupRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
+        mMovieAdapter.setOnItemClickListener(onItemClickListener);
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
         mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
-//        mMovieAdapter = new MovieAdapter(getActivity().getLayoutInflater(), mPicasso);
         mRecyclerView.setAdapter(mMovieAdapter);
     }
+
+    private MovieAdapter.OnItemClickListener onItemClickListener =
+            new MovieAdapter.OnItemClickListener() {
+                @Override
+                public void onMovieItemClicked(NowPlayingMovie movie) {
+                    if (MovieListFragment.this.mMovieListPresenter != null && movie != null) {
+                        MovieListFragment.this.mMovieListPresenter.onMovieClicked(movie);
+                    }
+            }
+    };
 
     private void loadMovies() {
         mMovieListPresenter.initialize();

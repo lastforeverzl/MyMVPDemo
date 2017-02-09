@@ -54,8 +54,8 @@ public class MovieListActivity extends BaseActivity implements HasComponent<Movi
     }
 
     @Override
-    public void onMovieListClicked(NowPlayingMovie movie) {
-        // TODO: 2/2/17 implement this.navigator.navigateToMovieDetails()
+    public void onMovieClicked(NowPlayingMovie movie) {
+        this.mNavigator.navigateToMovieDetails(this, movie.getId());
     }
 
 }

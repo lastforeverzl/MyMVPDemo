@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="4dp">
+            android:layout_margin="4dp">
 
             <ImageView
                 android:id="@+id/movie_icon"
@@ -55,12 +55,12 @@
                 android:id="@+id/movie_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="13sp"
                 android:textColor="@color/colorAccent"
                 android:layout_alignBottom="@id/movie_icon"
                 android:layout_alignLeft="@id/movie_icon"
                 android:layout_alignRight="@id/movie_icon"
-                android:background="#80000000"
+                android:background="@color/color_rv_textView"
                 android:gravity="center"/>
         </RelativeLayout>
 

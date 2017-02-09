@@ -4,6 +4,7 @@ import com.zackyzhang.mymvpdemo.di.module.ActivityModule;
 import com.zackyzhang.mymvpdemo.di.module.MoviesModule;
 import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MainActivity;
+import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieDetailsFragment;
 import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieListFragment;
 
 import dagger.Component;
@@ -24,4 +25,5 @@ public interface MoviesComponent extends ActivityComponent{
 
     void inject(MovieListFragment movieListFragment);
 
+    void inject(MovieDetailsFragment movieDetailsFragment);
 }

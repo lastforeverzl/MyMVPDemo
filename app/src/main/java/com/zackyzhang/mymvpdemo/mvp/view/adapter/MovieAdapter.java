@@ -31,9 +31,14 @@ import timber.log.Timber;
 // TODO: 2/3/17 need to take a look at adapter.
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
+    public interface OnItemClickListener {
+        void onMovieItemClicked(NowPlayingMovie movie);
+    }
+
     private LayoutInflater mLayoutInflater;
     private List<NowPlayingMovie> mMovieList = new ArrayList<>();
     private Picasso mPicasso;
+    private OnItemClickListener mOnItemClickListener;
 
     @Inject
     public MovieAdapter(Context context, Picasso picasso) {
@@ -49,7 +54,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        holder.bind(mMovieList.get(position));
+        final NowPlayingMovie movie = mMovieList.get(position);
+        holder.bind(movie);
+        holder.itemView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (MovieAdapter.this.mOnItemClickListener != null) {
+                    MovieAdapter.this.mOnItemClickListener.onMovieItemClicked(movie);
+                }
+            }
+        });
     }
 
     @Override
@@ -91,5 +105,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
             }
 
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 }
