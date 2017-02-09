@@ -2,9 +2,7 @@ package com.zackyzhang.mymvpdemo.mvp.presenter;
 
 import android.support.annotation.NonNull;
 
-import com.zackyzhang.mymvpdemo.Constants;
-import com.zackyzhang.mymvpdemo.GetMovieList;
-import com.zackyzhang.mymvpdemo.data.MoviesService;
+import com.zackyzhang.mymvpdemo.data.GetMovieList;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
@@ -14,7 +12,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.observers.DisposableObserver;
-import timber.log.Timber;
 
 /**
  * Created by lei on 2/1/17.
@@ -111,7 +108,7 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
         @Override
         public void onComplete() {
             MovieListPresenter.this.hideViewLoading();
-            MovieListPresenter.this.showToastMessage("Get Movie completed");
+            MovieListPresenter.this.showToastMessage("Get MovieEntity completed");
         }
     }
 }

@@ -1,13 +1,14 @@
 package com.zackyzhang.mymvpdemo.data;
 
+import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingResult;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -21,4 +22,10 @@ public interface MoviesService {
                                                                   @Query("language") String language,
                                                                   @Query("page") int page,
                                                                   @Query("region") String region);
+
+    @GET("movie/{movie_id}")
+    Observable<MovieEntity> getMoiveDetail(@Path("movie_id") int movieId,
+                                           @Query("api_key") String apiKey,
+                                           @Query("language") String language,
+                                           @Query("append_to_response") String appendToResponse);
 }

@@ -12,15 +12,21 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
+import com.zackyzhang.mymvpdemo.data.GetMovieDetail;
+import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieDetailsView;
+import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 /**
@@ -34,6 +40,8 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @Inject
     protected Picasso mPicasso;
+    @Inject
+    GetMovieDetail mGetMovieDetailCase; // test service
 
     @BindView(R.id.test_fragment_detail)
     TextView testView; // test purpose
@@ -72,7 +80,11 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        testView.setText(String.valueOf(mTestMovieId));// test purpose
+        /**
+         * For movie detail Observable test purpose
+         */
+        testView.setText(String.valueOf(mTestMovieId));
+        mGetMovieDetailCase.execute(new MovieDetailObserver(), GetMovieDetail.Params.forId(329865));
     }
 
     @Override
@@ -124,5 +136,26 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     private int getCurrentMovieId() {
         Bundle args = getArguments();
         return args.getInt(PARAM_MOVIE_ID);
+    }
+
+    /**
+     *  For movie detail Observable test purpose
+     */
+    private final class MovieDetailObserver extends DisposableObserver<MovieEntity> {
+
+        @Override
+        public void onNext(MovieEntity movieEntity) {
+            Timber.tag(TAG).d(movieEntity.getHomepage());
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Timber.tag(TAG).d(e.getMessage());
+        }
+
+        @Override
+        public void onComplete() {
+            Timber.tag(TAG).d("finish");
+        }
     }
 }

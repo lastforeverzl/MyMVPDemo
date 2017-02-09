@@ -1,4 +1,4 @@
-package com.zackyzhang.mymvpdemo;
+package com.zackyzhang.mymvpdemo.data;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
