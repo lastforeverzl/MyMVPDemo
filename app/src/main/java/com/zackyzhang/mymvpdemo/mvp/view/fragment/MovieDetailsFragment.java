@@ -1,33 +1,26 @@
 package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
-import com.zackyzhang.mymvpdemo.data.GetMovieDetail;
 import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
-import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieDetailsView;
-import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
-
-import java.util.List;
+import com.zackyzhang.mymvpdemo.mvp.presenter.MovieDetailsPresenter;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.observers.DisposableObserver;
-import timber.log.Timber;
 
 /**
  * Created by lei on 2/8/17.
@@ -41,12 +34,12 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @Inject
     protected Picasso mPicasso;
     @Inject
-    GetMovieDetail mGetMovieDetailCase; // test service
+    MovieDetailsPresenter mMovieDetailsPresenter;
 
+    @BindView(R.id.layout_progress)
+    RelativeLayout progress;
     @BindView(R.id.test_fragment_detail)
-    TextView testView; // test purpose
-
-    private int mTestMovieId; // test purpose
+    TextView testView;
 
     public static MovieDetailsFragment forMovie(int movieId) {
         MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
@@ -73,18 +66,16 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
         unbinder = ButterKnife.bind(this, fragmentView);
-        mTestMovieId = getCurrentMovieId(); // test purpose
         return fragmentView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        /**
-         * For movie detail Observable test purpose
-         */
-        testView.setText(String.valueOf(mTestMovieId));
-        mGetMovieDetailCase.execute(new MovieDetailObserver(), GetMovieDetail.Params.forId(329865));
+        mMovieDetailsPresenter.setView(this);
+        if (savedInstanceState == null) {
+            loadMovieDetails();
+        }
     }
 
     @Override
@@ -109,23 +100,24 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     @Override
-    public void setupUI(NowPlayingMovie movie) {
-
+    public void renderMovieDetails(MovieEntity movie) {
+        // TODO: 2/9/17 need to finish by UI.
+        testView.setText(movie.getHomepage());
     }
 
     @Override
     public void showLoadingDialog() {
-
+        progress.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoadingDialog() {
-
+        progress.setVisibility(View.GONE);
     }
 
     @Override
     public void showError(String message) {
-
+        showToastMessage(message);
     }
 
     @Override
@@ -133,29 +125,14 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         return null;
     }
 
+    public void loadMovieDetails() {
+        if (mMovieDetailsPresenter != null) {
+            mMovieDetailsPresenter.initialize(getCurrentMovieId());
+        }
+    }
+
     private int getCurrentMovieId() {
         Bundle args = getArguments();
         return args.getInt(PARAM_MOVIE_ID);
-    }
-
-    /**
-     *  For movie detail Observable test purpose
-     */
-    private final class MovieDetailObserver extends DisposableObserver<MovieEntity> {
-
-        @Override
-        public void onNext(MovieEntity movieEntity) {
-            Timber.tag(TAG).d(movieEntity.getHomepage());
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Timber.tag(TAG).d(e.getMessage());
-        }
-
-        @Override
-        public void onComplete() {
-            Timber.tag(TAG).d("finish");
-        }
     }
 }

@@ -1,6 +1,6 @@
 package com.zackyzhang.mymvpdemo.mvp;
 
-import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
+import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
 
 /**
  * Created by lei on 2/8/17.
@@ -8,5 +8,5 @@ import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 
 public interface MovieDetailsView extends BaseView {
 
-    void setupUI(NowPlayingMovie movie);
+    void renderMovieDetails(MovieEntity movie);
 }

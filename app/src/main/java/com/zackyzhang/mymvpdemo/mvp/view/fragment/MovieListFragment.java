@@ -145,7 +145,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
      * @param movies
      */
     @Override
-    public void loadMovieList(List<NowPlayingMovie> movies, boolean isLastPage) {
+    public void renderMovieList(List<NowPlayingMovie> movies, boolean isLastPage) {
         if (isLastPage) {
             this.isLastPage = true;
             this.isLoadingMore = false;

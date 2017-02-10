@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MovieListView extends BaseView {
 
-    void loadMovieList(List<NowPlayingMovie> movies, boolean isLastPage);
+    void renderMovieList(List<NowPlayingMovie> movies, boolean isLastPage);
 
     void viewMovie(NowPlayingMovie movie);
 }

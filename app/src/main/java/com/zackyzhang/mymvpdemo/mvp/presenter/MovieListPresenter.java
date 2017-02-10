@@ -64,11 +64,11 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
     }
 
     private void showMovieListInView(List<NowPlayingMovie> movieList, boolean isLastPage) {
-        mMovieListView.loadMovieList(movieList, isLastPage);
+        mMovieListView.renderMovieList(movieList, isLastPage);
     }
 
     /**
-     *  Retrieving the movie list
+     *  Initialize the presenter, Retrieving the movie list
      */
     public void initialize() {
         this.showViewLoading();
