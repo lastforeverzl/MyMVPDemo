@@ -27,7 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieListActivity extends BaseActivity implements HasComponent<MoviesComponent>, MovieListFragment.MovieListListener {
+public class MovieListActivity extends BaseActivity implements HasComponent<MoviesComponent>, MovieListFragment.MovieListListener, UCMovieListFragment.UCMovieListListener {
 
     private MoviesComponent mMoviesComponent;
     private MovieListPagerAdapter mMovieListPagerAdapter;

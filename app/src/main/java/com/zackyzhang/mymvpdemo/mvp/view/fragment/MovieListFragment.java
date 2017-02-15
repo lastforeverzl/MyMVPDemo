@@ -66,12 +66,14 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         if (context instanceof MovieListListener) {
             this.mMovieListListener = (MovieListListener) context;
         }
+        Log.d(TAG, "onAttach");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getComponent(MoviesComponent.class).inject(this);
+        Log.d(TAG, "onCreate");
     }
 
     @Override
@@ -79,12 +81,14 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         final View fragmentView = inflater.inflate(R.layout.fragment_movie_list, container, false);
         unbinder = ButterKnife.bind(this, fragmentView);
         setupRecyclerView();
+        Log.d(TAG, "onCreateView");
         return fragmentView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, this.toString());
         mMovieListPresenter.setView(this);
         if (savedInstanceState == null) {
             loadMovies();
@@ -105,23 +109,27 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
                 }
             }
         });
+        Log.d(TAG, "onViewCreated");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         mMovieListPresenter.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
         mMovieListPresenter.pause();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.d(TAG, "onDestroyView");
         mRecyclerView.setAdapter(null);
         unbinder.unbind();
     }
@@ -129,12 +137,14 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy");
         mMovieListPresenter.destroy();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(TAG, "onDetach");
         mMovieListListener = null;
     }
 

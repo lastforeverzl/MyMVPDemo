@@ -13,7 +13,7 @@ import java.util.List;
 public class MovieListPagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
-    private String[] mTitles = new String[]{"tab1","tab2"};
+    private String[] mTitles = new String[]{"tab1", "tab2"};
 
     public MovieListPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);

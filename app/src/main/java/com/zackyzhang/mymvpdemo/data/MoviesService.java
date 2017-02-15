@@ -28,4 +28,10 @@ public interface MoviesService {
                                            @Query("api_key") String apiKey,
                                            @Query("language") String language,
                                            @Query("append_to_response") String appendToResponse);
+
+    @GET("movie/upcoming")
+    Observable<NowPlayingResult<List<NowPlayingMovie>>> ucMovieList(@Query("api_key") String apiKey,
+                                                                  @Query("language") String language,
+                                                                  @Query("page") int page,
+                                                                  @Query("region") String region);
 }
