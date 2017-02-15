@@ -2,6 +2,8 @@ package com.zackyzhang.mymvpdemo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 
 import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MovieDetailsActivity;
@@ -29,11 +31,16 @@ public class Navigator {
         }
     }
 
-    public void navigateToMovieDetails(Context context, int movieId) {
+    public void navigateToMovieDetails(Context context, int movieId, String backdropImage, Bundle bundle) {
         // TODO: 2/8/17 animated transition between these two activity.
         if (context != null) {
-            Intent intentToLaunch = MovieDetailsActivity.getCallingIntent(context, movieId);
-            context.startActivity(intentToLaunch);
+            Intent intentToLaunch = MovieDetailsActivity.getCallingIntent(context, movieId, backdropImage);
+            Log.d("MovieListActivity", "bundle: " + bundle.toString());
+            if (bundle != null) {
+                context.startActivity(intentToLaunch, bundle);
+            } else {
+                context.startActivity(intentToLaunch);
+            }
         }
     }
 }

@@ -2,11 +2,15 @@ package com.zackyzhang.mymvpdemo.mvp.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 
+import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.di.HasComponent;
 import com.zackyzhang.mymvpdemo.di.component.DaggerMoviesComponent;
@@ -23,37 +27,50 @@ import butterknife.ButterKnife;
 public class MovieDetailsActivity extends BaseActivity implements HasComponent<MoviesComponent> {
 
     private static final String INTENT_EXTRA_PARAM_MOVIE_ID = "com.zackyzhang.mymvpdemo.INTENT_EXTRA_PARAM_MOVIE_ID";
+    private static final String INTENT_EXTRA_PARAM_MOVIE_IMAGE = "com.zackyzhang.mymvpdemo.INTENT_EXTRA_PARAM_MOVIE_IMAGE";
     private static final String INSTANCE_STATE_PARAM_MOVIE_ID = "com.zackyzhang.mymvpdemo.INSTANCE_STATE_PARAM_MOVIE_ID";
 
-    public static Intent getCallingIntent(Context context, int movieId) {
+    public static Intent getCallingIntent(Context context, int movieId, String image) {
         Intent callingIntent = new Intent(context, MovieDetailsActivity.class);
         callingIntent.putExtra(INTENT_EXTRA_PARAM_MOVIE_ID, movieId);
+        callingIntent.putExtra(INTENT_EXTRA_PARAM_MOVIE_IMAGE, image);
         return callingIntent;
     }
 
     private int mMovieId;
+    private String mMovieImage;
     private MoviesComponent mMoviesComponent;
 
-    @BindView(R.id.my_toolbar)
+    @BindView(R.id.details_toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.test_fragment_detail_image2)
+    ImageView testshareView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
 
         this.initializeActivity(savedInstanceState);
         this.resolveDaggerDependency();
-        mToolbar.setTitle("MOVIE DETAIL");
-        setSupportActionBar(mToolbar);
+        this.initializeView();
+
+        // Activity transition test.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            testshareView.setTransitionName("shareViewTest");
+        }
+        mPicasso.load(Constants.BACKDROP_IMAGE_DOMAIN + mMovieImage)
+                .fit()
+                .into(testshareView);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (outState != null) {
             outState.putInt(INSTANCE_STATE_PARAM_MOVIE_ID, mMovieId);
+            outState.putString(INTENT_EXTRA_PARAM_MOVIE_IMAGE, mMovieImage);
         }
         super.onSaveInstanceState(outState);
     }
@@ -61,9 +78,11 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
     private void initializeActivity(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             this.mMovieId = getIntent().getIntExtra(INTENT_EXTRA_PARAM_MOVIE_ID, -1);
+            this.mMovieImage = getIntent().getStringExtra(INTENT_EXTRA_PARAM_MOVIE_IMAGE);
             addFragment(R.id.fragmentContainer, MovieDetailsFragment.forMovie(mMovieId));
         } else {
             this.mMovieId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_MOVIE_ID);
+            this.mMovieImage = savedInstanceState.getString(INTENT_EXTRA_PARAM_MOVIE_IMAGE);
         }
     }
 
@@ -72,6 +91,18 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
                 .activityModule(getActivityModule())
                 .applicationComponent(getApplicationComponent())
                 .build();
+    }
+
+    private void initializeView() {
+        mToolbar.setTitle("MOVIE DETAIL");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

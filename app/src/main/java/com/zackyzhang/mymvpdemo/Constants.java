@@ -10,7 +10,9 @@ public class Constants {
 
     public static final String MOVIE_DOMAIN = "https://api.themoviedb.org/3/";
 
-    public static final String IMAGE_DOMAIN = "https://image.tmdb.org/t/p/w500/";
+    public static final String POSTER_IMAGE_DOMAIN = "https://image.tmdb.org/t/p/w500/";
+
+    public static final String BACKDROP_IMAGE_DOMAIN = "https://image.tmdb.org/t/p/w780/";
 
     public static final String API_LANGUAGE = "en-US";
 

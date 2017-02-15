@@ -54,11 +54,11 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
      */
     public void initialize(int movieId) {
         this.showViewLoading();
-        this.getMovieDetail();
+        this.getMovieDetail(movieId);
     }
 
-    public void getMovieDetail() {
-        mGetMovieDetailCase.execute(new MovieDetailObserver(), GetMovieDetail.Params.forId(329865));
+    public void getMovieDetail(int movieId) {
+        mGetMovieDetailCase.execute(new MovieDetailObserver(), GetMovieDetail.Params.forId(movieId));
     }
 
     private void showViewLoading() {

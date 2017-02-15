@@ -5,9 +5,7 @@ import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
 
 import android.content.Context;
-import android.graphics.LightingColorFilter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by lei on 2/1/17.
@@ -32,7 +29,7 @@ import timber.log.Timber;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
 
     public interface OnItemClickListener {
-        void onMovieItemClicked(NowPlayingMovie movie);
+        void onMovieItemClicked(NowPlayingMovie movie, View view);
     }
 
     private LayoutInflater mLayoutInflater;
@@ -60,7 +57,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
             @Override
             public void onClick(View v) {
                 if (MovieAdapter.this.mOnItemClickListener != null) {
-                    MovieAdapter.this.mOnItemClickListener.onMovieItemClicked(movie);
+                    ImageView imageView = (ImageView) v.findViewById(R.id.movie_icon);
+                    MovieAdapter.this.mOnItemClickListener.onMovieItemClicked(movie, imageView);
                 }
             }
         });
@@ -91,14 +89,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.Holder> {
         public void bind(NowPlayingMovie movie) {
             mMovie = movie;
             mTitle.setText(mMovie.getOriginalTitle());
-            if (mMovie.getPosterPath().isEmpty()) {
+            if (mMovie.getPosterPath() == null) {
                 mPicasso.load(Constants.IMAGE_PLACEHOLDER)
                         .priority(Picasso.Priority.HIGH)
                         .fit()
                         .placeholder(Constants.IMAGE_PLACEHOLDER)
                         .into(mMovieIcon);
             } else {
-                mPicasso.load(Constants.IMAGE_DOMAIN + mMovie.getPosterPath())
+                mPicasso.load(Constants.POSTER_IMAGE_DOMAIN + mMovie.getPosterPath())
                         .placeholder(Constants.IMAGE_PLACEHOLDER)
                         .error(Constants.IMAGE_PLACEHOLDER)
                         .into(mMovieIcon);

@@ -43,18 +43,21 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     protected MovieListPresenter mMovieListPresenter;
     @Inject
     protected MovieAdapter mMovieAdapter;
+    @Inject
+    Context mContext;
 
     private MovieListListener mMovieListListener;
     private Unbinder unbinder;
     private boolean isLoadingMore = false;
     private boolean isLastPage = false;
+    private View shareView;
 
     public MovieListFragment() {
         setRetainInstance(true);
     }
 
     public interface MovieListListener {
-        void onMovieClicked(final NowPlayingMovie movie);
+        void onMovieClicked(final NowPlayingMovie movie, View shareView);
     }
 
     @Override
@@ -161,7 +164,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void viewMovie(NowPlayingMovie movie) {
         if (this.mMovieListListener != null) {
-            mMovieListListener.onMovieClicked(movie);
+            mMovieListListener.onMovieClicked(movie, this.shareView);
         }
     }
 
@@ -196,7 +199,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     private MovieAdapter.OnItemClickListener onItemClickListener =
             new MovieAdapter.OnItemClickListener() {
                 @Override
-                public void onMovieItemClicked(NowPlayingMovie movie) {
+                public void onMovieItemClicked(NowPlayingMovie movie, View shareView) {
+                    MovieListFragment.this.shareView = shareView;
                     if (MovieListFragment.this.mMovieListPresenter != null && movie != null) {
                         MovieListFragment.this.mMovieListPresenter.onMovieClicked(movie);
                     }
