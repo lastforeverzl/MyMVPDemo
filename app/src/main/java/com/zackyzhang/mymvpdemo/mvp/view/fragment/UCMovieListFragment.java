@@ -25,9 +25,6 @@ import butterknife.Unbinder;
 
 public class UCMovieListFragment extends BaseFragment implements MovieListView{
 
-    @Inject
-    Context mContext;
-
     @BindView(R.id.test_fragment2)
     TextView testText;
 
