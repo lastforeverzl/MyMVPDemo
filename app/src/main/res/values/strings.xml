@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">MyMVPDemo</string>
+    <string name="movie_to_add">+ ADD TO WATCHLIST</string>
+    <string name="movie_added">ADDED TO WATCHLIST</string>
+    <string name="search">Search</string>
 </resources>

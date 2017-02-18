@@ -1,7 +1,7 @@
 package com.zackyzhang.mymvpdemo.data;
 
 import com.zackyzhang.mymvpdemo.Constants;
-import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
 
 import javax.inject.Inject;
 

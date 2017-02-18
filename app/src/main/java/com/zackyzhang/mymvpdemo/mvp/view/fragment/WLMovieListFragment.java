@@ -3,7 +3,6 @@ package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,13 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
-import com.zackyzhang.mymvpdemo.mvp.presenter.UCMovieListPresenter;
-import com.zackyzhang.mymvpdemo.mvp.view.adapter.UCMovieAdapter;
+import com.zackyzhang.mymvpdemo.mvp.presenter.WLMovieListPresenter;
+import com.zackyzhang.mymvpdemo.mvp.view.adapter.WLMovieAdapter;
 
 import java.util.List;
 
@@ -28,12 +28,12 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * Created by lei on 2/14/17.
+ * Created by lei on 2/17/17.
  */
 
-public class UCMovieListFragment extends BaseFragment implements MovieListView {
+public class WLMovieListFragment extends BaseFragment implements MovieListView {
 
-    private final String TAG = "UCMovieListFragment";
+    private final String TAG = "WLMovieListFragment";
 
     @BindView(R.id.movie_list)
     RecyclerView mRecyclerView;
@@ -45,31 +45,30 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Inject
     protected Picasso mPicasso;
     @Inject
-    protected UCMovieListPresenter mUCMovieListPresenter;
+    protected WLMovieListPresenter mMovieListPresenter;
     @Inject
-    protected UCMovieAdapter mMovieAdapter;
+    protected WLMovieAdapter mMovieAdapter;
     @Inject
     Context mContext;
 
-    private UCMovieListListener mUCMovieListListener;
+    private WLMovieListListener mMovieListListener;
     private Unbinder unbinder;
-    private boolean isLoadingMore = false;
-    private boolean isLastPage = false;
     private View shareView;
 
-    public UCMovieListFragment() {
+
+    public WLMovieListFragment() {
         setRetainInstance(true);
     }
 
-    public interface UCMovieListListener {
+    public interface WLMovieListListener {
         void onMovieClicked(int movieId, String backdropPath, View shareView);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof UCMovieListListener) {
-            this.mUCMovieListListener = (UCMovieListListener) context;
+        if (context instanceof WLMovieListListener) {
+            this.mMovieListListener = (WLMovieListListener) context;
         }
     }
 
@@ -90,31 +89,15 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, this.toString());
-        mUCMovieListPresenter.setView(this);
+        mMovieListPresenter.setView(this);
         if (savedInstanceState == null) {
             loadMovies();
             Log.d(TAG, "movies loaded!");
         }
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int lastVisibleItem = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
-                int totalItemCount = mRecyclerView.getLayoutManager().getItemCount();
-                if (lastVisibleItem >= totalItemCount - 2 && dy > 0 && !isLastPage) {
-                    if (!isLoadingMore) {
-                        isLoadingMore = true;
-                        mUCMovieListPresenter.getMoreMovies();
-                    }
-                }
-            }
-        });
-
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                loadMovies();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -123,13 +106,13 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onResume() {
         super.onResume();
-        mUCMovieListPresenter.resume();
+        mMovieListPresenter.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUCMovieListPresenter.pause();
+        mMovieListPresenter.pause();
     }
 
     @Override
@@ -142,13 +125,18 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mUCMovieListPresenter.destroy();
+        mMovieListPresenter.destroy();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mUCMovieListListener = null;
+        mMovieListListener = null;
+    }
+
+    @Override
+    protected <T> T getComponent(Class<T> componentType) {
+        return super.getComponent(componentType);
     }
 
     /**
@@ -157,31 +145,22 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
      */
     @Override
     public void renderMovieList(List<NowPlayingMovie> movies, boolean isLastPage) {
-        if (isLastPage) {
-            this.isLastPage = true;
-            this.isLoadingMore = false;
-            showError("END");
-            return;
-        }
         if (movies != null) {
             mMovieAdapter.loadMovies(movies);
-            isLoadingMore = false;
         }
     }
 
     @Override
     public void initAdapter() {
-
+        mMovieAdapter.clearAdapter();
     }
 
     @Override
     public void viewMovie(NowPlayingMovie movie) {
-        if (this.mUCMovieListListener != null) {
-            mUCMovieListListener.onMovieClicked(movie.getId(), movie.getBackdropPath(), this.shareView);
+        if (this.mMovieListListener != null) {
+            mMovieListListener.onMovieClicked(movie.getId(), movie.getBackdropPath(), this.shareView);
         }
     }
-
-
 
     @Override
     public void showLoadingDialog() {
@@ -206,23 +185,24 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     private void setupRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
         mMovieAdapter.setOnItemClickListener(onItemClickListener);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
-        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mMovieAdapter);
     }
 
-    private UCMovieAdapter.OnItemClickListener onItemClickListener =
-            new UCMovieAdapter.OnItemClickListener() {
+    private WLMovieAdapter.OnItemClickListener onItemClickListener =
+            new WLMovieAdapter.OnItemClickListener() {
                 @Override
                 public void onMovieItemClicked(NowPlayingMovie movie, View shareView) {
-                    UCMovieListFragment.this.shareView = shareView;
-                    if (UCMovieListFragment.this.mUCMovieListPresenter != null && movie != null) {
-                        UCMovieListFragment.this.mUCMovieListPresenter.onMovieClicked(movie);
+                    WLMovieListFragment.this.shareView = shareView;
+                    if (WLMovieListFragment.this.mMovieListPresenter != null && movie != null) {
+                        WLMovieListFragment.this.mMovieListPresenter.onMovieClicked(movie);
                     }
                 }
             };
 
     private void loadMovies() {
-        mUCMovieListPresenter.initialize();
+        mMovieListPresenter.initialize();
     }
+
 }

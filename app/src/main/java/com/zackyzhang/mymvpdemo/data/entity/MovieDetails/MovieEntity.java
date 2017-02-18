@@ -1,4 +1,4 @@
-package com.zackyzhang.mymvpdemo.data.entity.Movie;
+package com.zackyzhang.mymvpdemo.data.entity.MovieDetails;
 
 import com.google.gson.annotations.SerializedName;
 

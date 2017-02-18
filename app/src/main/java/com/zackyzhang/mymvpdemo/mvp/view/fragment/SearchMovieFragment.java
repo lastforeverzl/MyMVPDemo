@@ -2,22 +2,24 @@ package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
-import com.zackyzhang.mymvpdemo.mvp.presenter.UCMovieListPresenter;
-import com.zackyzhang.mymvpdemo.mvp.view.adapter.UCMovieAdapter;
+import com.zackyzhang.mymvpdemo.mvp.presenter.MovieListPresenter;
+import com.zackyzhang.mymvpdemo.mvp.presenter.SearchMoviePresenter;
+import com.zackyzhang.mymvpdemo.mvp.view.adapter.MovieAdapter;
+import com.zackyzhang.mymvpdemo.mvp.view.adapter.SearchMovieAdapter;
 
 import java.util.List;
 
@@ -28,12 +30,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * Created by lei on 2/14/17.
+ * Created by lei on 2/17/17.
  */
 
-public class UCMovieListFragment extends BaseFragment implements MovieListView {
-
-    private final String TAG = "UCMovieListFragment";
+public class SearchMovieFragment extends BaseFragment implements MovieListView{
 
     @BindView(R.id.movie_list)
     RecyclerView mRecyclerView;
@@ -45,42 +45,43 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Inject
     protected Picasso mPicasso;
     @Inject
-    protected UCMovieListPresenter mUCMovieListPresenter;
+    protected SearchMoviePresenter mSearchMoviePresenter;
     @Inject
-    protected UCMovieAdapter mMovieAdapter;
+    protected SearchMovieAdapter mMovieAdapter;
     @Inject
     Context mContext;
 
-    private UCMovieListListener mUCMovieListListener;
+    private SearchMovieListener mMovieListListener;
     private Unbinder unbinder;
     private boolean isLoadingMore = false;
     private boolean isLastPage = false;
     private View shareView;
 
-    public UCMovieListFragment() {
+    public SearchMovieFragment() {
         setRetainInstance(true);
     }
 
-    public interface UCMovieListListener {
+    public interface SearchMovieListener {
         void onMovieClicked(int movieId, String backdropPath, View shareView);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof UCMovieListListener) {
-            this.mUCMovieListListener = (UCMovieListListener) context;
+        if (context instanceof SearchMovieListener) {
+            this.mMovieListListener = (SearchMovieListener) context;
         }
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getComponent(MoviesComponent.class).inject(this);
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View fragmentView = inflater.inflate(R.layout.fragment_movie_list, container, false);
         unbinder = ButterKnife.bind(this, fragmentView);
         setupRecyclerView();
@@ -88,14 +89,9 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, this.toString());
-        mUCMovieListPresenter.setView(this);
-        if (savedInstanceState == null) {
-            loadMovies();
-            Log.d(TAG, "movies loaded!");
-        }
+        mSearchMoviePresenter.setView(this);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -106,7 +102,7 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
                 if (lastVisibleItem >= totalItemCount - 2 && dy > 0 && !isLastPage) {
                     if (!isLoadingMore) {
                         isLoadingMore = true;
-                        mUCMovieListPresenter.getMoreMovies();
+                        mSearchMoviePresenter.getMoreMovies();
                     }
                 }
             }
@@ -123,13 +119,13 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onResume() {
         super.onResume();
-        mUCMovieListPresenter.resume();
+        mSearchMoviePresenter.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUCMovieListPresenter.pause();
+        mSearchMoviePresenter.pause();
     }
 
     @Override
@@ -142,19 +138,20 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mUCMovieListPresenter.destroy();
+        mSearchMoviePresenter.destroy();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mUCMovieListListener = null;
+        mMovieListListener = null;
     }
 
-    /**
-     * Render movie list to adapter.
-     * @param movies
-     */
+    @Override
+    protected <T> T getComponent(Class<T> componentType) {
+        return super.getComponent(componentType);
+    }
+
     @Override
     public void renderMovieList(List<NowPlayingMovie> movies, boolean isLastPage) {
         if (isLastPage) {
@@ -170,18 +167,11 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     }
 
     @Override
-    public void initAdapter() {
-
-    }
-
-    @Override
     public void viewMovie(NowPlayingMovie movie) {
-        if (this.mUCMovieListListener != null) {
-            mUCMovieListListener.onMovieClicked(movie.getId(), movie.getBackdropPath(), this.shareView);
+        if (this.mMovieListListener != null) {
+            mMovieListListener.onMovieClicked(movie.getId(), movie.getBackdropPath(), this.shareView);
         }
     }
-
-
 
     @Override
     public void showLoadingDialog() {
@@ -203,26 +193,42 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
         return null;
     }
 
+    /**
+     * Get search text from activity.
+     * @param query
+     */
+    public void searchMovie(String query) {
+        loadMovies(query);
+    }
+
+    @Override
+    public void initAdapter() {
+        mMovieAdapter.clearAdapter();
+    }
+
     private void setupRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
         mMovieAdapter.setOnItemClickListener(onItemClickListener);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
-        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mMovieAdapter);
     }
 
-    private UCMovieAdapter.OnItemClickListener onItemClickListener =
-            new UCMovieAdapter.OnItemClickListener() {
+    private SearchMovieAdapter.OnItemClickListener onItemClickListener =
+            new SearchMovieAdapter.OnItemClickListener() {
                 @Override
                 public void onMovieItemClicked(NowPlayingMovie movie, View shareView) {
-                    UCMovieListFragment.this.shareView = shareView;
-                    if (UCMovieListFragment.this.mUCMovieListPresenter != null && movie != null) {
-                        UCMovieListFragment.this.mUCMovieListPresenter.onMovieClicked(movie);
+                    SearchMovieFragment.this.shareView = shareView;
+                    if (SearchMovieFragment.this.mSearchMoviePresenter != null && movie != null) {
+                        SearchMovieFragment.this.mSearchMoviePresenter.onMovieClicked(movie);
                     }
                 }
             };
 
-    private void loadMovies() {
-        mUCMovieListPresenter.initialize();
+    private void loadMovies(String query) {
+        mSearchMoviePresenter.initialize(query);
     }
+
+
+
 }

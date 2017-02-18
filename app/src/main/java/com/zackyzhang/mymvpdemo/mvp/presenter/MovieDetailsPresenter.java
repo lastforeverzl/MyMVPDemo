@@ -3,7 +3,9 @@ package com.zackyzhang.mymvpdemo.mvp.presenter;
 import android.support.annotation.NonNull;
 
 import com.zackyzhang.mymvpdemo.data.GetMovieDetail;
-import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.local.MoviesLocalDataSource;
+import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieDetailsView;
 
 import javax.inject.Inject;
@@ -14,17 +16,20 @@ import timber.log.Timber;
 /**
  * Created by lei on 2/9/17.
  */
-
+@PerActivity
 public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
 
     private static final String TAG = "MovieDetailsPresenter";
 
     private MovieDetailsView mMovieDetailsView;
     private GetMovieDetail mGetMovieDetailCase;
+    private MoviesLocalDataSource mMoviesDB;
+    private MovieEntity mMovie;
 
     @Inject
-    public MovieDetailsPresenter(GetMovieDetail getMovieDetailCase) {
+    public MovieDetailsPresenter(GetMovieDetail getMovieDetailCase, MoviesLocalDataSource moviesLocalDataSource) {
         mGetMovieDetailCase = getMovieDetailCase;
+        mMoviesDB = moviesLocalDataSource;
     }
 
     @Override
@@ -57,8 +62,20 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
         this.getMovieDetail(movieId);
     }
 
-    public void getMovieDetail(int movieId) {
+    private void getMovieDetail(int movieId) {
         mGetMovieDetailCase.execute(new MovieDetailObserver(), GetMovieDetail.Params.forId(movieId));
+    }
+
+    public Boolean isExist(MovieEntity movie) {
+        return mMoviesDB.isMovieExist(movie.getId());
+    }
+
+    public void saveMovieToDB() {
+        mMoviesDB.saveMovie(mMovie);
+    }
+
+    public void deleteMovieFromDB() {
+        mMoviesDB.deleteMovie(mMovie.getId(), mMovie.getOriginalTitle());
     }
 
     private void showViewLoading() {
@@ -74,6 +91,7 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
     }
 
     private void showMovieDetailsInView(MovieEntity movieEntity) {
+        mMovie = movieEntity;
         mMovieDetailsView.renderMovieDetails(movieEntity);
     }
 
@@ -81,7 +99,6 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
 
         @Override
         public void onNext(MovieEntity movieEntity) {
-            Timber.tag(TAG).d(movieEntity.getHomepage());
             MovieDetailsPresenter.this.showMovieDetailsInView(movieEntity);
         }
 
@@ -92,7 +109,6 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
 
         @Override
         public void onComplete() {
-            Timber.tag(TAG).d("finish");
             MovieDetailsPresenter.this.hideViewLoading();
         }
     }

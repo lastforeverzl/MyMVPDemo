@@ -13,4 +13,6 @@ public interface MovieListView extends BaseView {
     void renderMovieList(List<NowPlayingMovie> movies, boolean isLastPage);
 
     void viewMovie(NowPlayingMovie movie);
+
+    void initAdapter();
 }

@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MovieDetailsActivity;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MovieListActivity;
+import com.zackyzhang.mymvpdemo.mvp.view.activity.SearchMovieActivity;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,6 +41,13 @@ public class Navigator {
             } else {
                 context.startActivity(intentToLaunch);
             }
+        }
+    }
+
+    public void navigateToSearch(Context context) {
+        if (context != null) {
+            Intent intentToLaunch = SearchMovieActivity.getCallingIntent(context);
+            context.startActivity(intentToLaunch);
         }
     }
 }

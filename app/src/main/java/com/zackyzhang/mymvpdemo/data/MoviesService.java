@@ -1,8 +1,9 @@
 package com.zackyzhang.mymvpdemo.data;
 
-import com.zackyzhang.mymvpdemo.data.entity.Movie.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingResult;
+import com.zackyzhang.mymvpdemo.data.entity.SearchMovies;
 
 import java.util.List;
 
@@ -34,4 +35,11 @@ public interface MoviesService {
                                                                   @Query("language") String language,
                                                                   @Query("page") int page,
                                                                   @Query("region") String region);
+
+    @GET("search/movie")
+    Observable<SearchMovies<List<NowPlayingMovie>>> searchMovies(@Query("api_key") String apiKey,
+                                                                 @Query("language") String language,
+                                                                 @Query("query") String query,
+                                                                 @Query("page") int page,
+                                                                 @Query("region") String region);
 }

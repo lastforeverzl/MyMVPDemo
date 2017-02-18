@@ -55,6 +55,15 @@ public class NowPlayingMovie {
     @SerializedName("genre_ids")
     private List<Integer> genreIds;
 
+    public NowPlayingMovie(int id, String originalTitle, String overview, String posterPath, String backdropPath, double voteAverage) {
+        this.posterPath = posterPath;
+        this.overview = overview;
+        this.id = id;
+        this.originalTitle = originalTitle;
+        this.backdropPath = backdropPath;
+        this.voteAverage = voteAverage;
+    }
+
     public String getPosterPath() {
         return posterPath;
     }

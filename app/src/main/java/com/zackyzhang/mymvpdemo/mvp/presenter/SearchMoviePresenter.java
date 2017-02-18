@@ -1,39 +1,41 @@
 package com.zackyzhang.mymvpdemo.mvp.presenter;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.zackyzhang.mymvpdemo.data.GetMovieList;
+import com.zackyzhang.mymvpdemo.data.GetSearchMovies;
 import com.zackyzhang.mymvpdemo.data.entity.NowPlayingMovie;
-import com.zackyzhang.mymvpdemo.di.scope.PerActivity;
 import com.zackyzhang.mymvpdemo.mvp.MovieListView;
+import com.zackyzhang.mymvpdemo.mvp.view.fragment.SearchMovieFragment;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.observers.DisposableObserver;
-import timber.log.Timber;
 
 /**
- * Created by lei on 2/1/17.
+ * Created by lei on 2/17/17.
  */
-@PerActivity
-public class MovieListPresenter implements Presenter<MovieListView>  {
+
+public class SearchMoviePresenter implements Presenter<MovieListView> {
+
+    private static final String TAG = "SearchMoviePresenter";
 
     private MovieListView mMovieListView;
-    private GetMovieList mGetMovieListCase;
+    private GetSearchMovies mGetSearchCase;
 
     private int currentPage = 1;
     private boolean isLastPage = false;
+    private String mQuery;
 
     @Inject
-    public MovieListPresenter(GetMovieList getMovieListCase) {
-        mGetMovieListCase = getMovieListCase;
+    public SearchMoviePresenter(GetSearchMovies getSearchMovies) {
+        mGetSearchCase = getSearchMovies;
     }
 
     @Override
-    public void setView(@NonNull MovieListView view) {
+    public void setView(MovieListView view) {
         mMovieListView = view;
     }
 
@@ -49,7 +51,7 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
 
     @Override
     public void destroy() {
-        mGetMovieListCase.dispose();
+        mGetSearchCase.dispose();
         mMovieListView = null;
     }
 
@@ -72,19 +74,25 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
     /**
      *  Initialize the presenter, Retrieving the movie list
      */
-    public void initialize() {
+    public void initialize(String query) {
+        mQuery = query;
+        mMovieListView.initAdapter();
+        isLastPage = false;
+        currentPage = 1;
         this.showViewLoading();
         this.getMovies();
     }
 
     public void getMoreMovies() {
         this.showViewLoading();
-        mGetMovieListCase.execute(new MovieListObserver(), GetMovieList.Params.forPage(++currentPage));
+        Log.d(TAG, "currentPage: " + currentPage);
+        mGetSearchCase.execute(new MovieListObserver(), GetSearchMovies.Params.forParams(++currentPage, mQuery));
     }
 
     private void getMovies() {
-        mGetMovieListCase.execute(new MovieListObserver(), GetMovieList.Params.forPage(currentPage));
-
+        // TODO: 2/17/17 maybe need to reset page number before second search.
+        Log.d(TAG, "currentPage: " + currentPage);
+        mGetSearchCase.execute(new MovieListObserver(), GetSearchMovies.Params.forParams(currentPage, mQuery));
     }
 
     public void onMovieClicked(NowPlayingMovie movie) {
@@ -98,19 +106,19 @@ public class MovieListPresenter implements Presenter<MovieListView>  {
             if (nowPlayingMovies.size() == 0) {
                 isLastPage = true;
             }
-            MovieListPresenter.this.showMovieListInView(nowPlayingMovies, isLastPage);
+            SearchMoviePresenter.this.showMovieListInView(nowPlayingMovies, isLastPage);
         }
 
         @Override
         public void onError(Throwable e) {
-            MovieListPresenter.this.hideViewLoading();
-            MovieListPresenter.this.showToastMessage("Error in loading " + e.getMessage());
+            SearchMoviePresenter.this.hideViewLoading();
+            SearchMoviePresenter.this.showToastMessage("Error in loading " + e.getMessage());
         }
 
         @Override
         public void onComplete() {
-            MovieListPresenter.this.hideViewLoading();
-            MovieListPresenter.this.showToastMessage("Get MovieEntity completed");
+            SearchMoviePresenter.this.hideViewLoading();
+            SearchMoviePresenter.this.showToastMessage("Get MovieEntity completed");
         }
     }
 }

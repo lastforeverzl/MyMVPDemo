@@ -8,6 +8,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.data.MoviesService;
+import com.zackyzhang.mymvpdemo.data.local.MoviesLocalDataSource;
 import com.zackyzhang.mymvpdemo.di.ApplicationContext;
 import com.zackyzhang.mymvpdemo.di.scope.ApplicationScope;
 
@@ -108,5 +109,11 @@ public class MoviesServiceModule {
         return new Picasso.Builder(context)
                 .downloader(okHttp3Downloader)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    MoviesLocalDataSource provideMoviesLocalDataSource(Context context) {
+        return new MoviesLocalDataSource(context);
     }
 }

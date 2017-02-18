@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.data.MoviesService;
+import com.zackyzhang.mymvpdemo.data.local.MoviesLocalDataSource;
 import com.zackyzhang.mymvpdemo.di.module.ApplicationModule;
 import com.zackyzhang.mymvpdemo.di.ApplicationContext;
 import com.zackyzhang.mymvpdemo.di.module.MoviesServiceModule;
@@ -27,5 +28,7 @@ public interface ApplicationComponent {
     MoviesService getMoviesService();
 
     Picasso getPicasso();
+
+    MoviesLocalDataSource getMoviesLocalDataSource();
 
 }
