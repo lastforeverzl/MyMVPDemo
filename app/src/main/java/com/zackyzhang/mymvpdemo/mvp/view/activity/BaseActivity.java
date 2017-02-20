@@ -52,19 +52,4 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ActivityModule getActivityModule() {
         return new ActivityModule(this);
     }
-//
-//    protected void showTheDialog(String message) {
-//        if (mProgressDialog == null) {
-//            mProgressDialog = new ProgressDialog(this);
-//            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//            mProgressDialog.setCancelable(true);
-//        }
-//        mProgressDialog.setMessage(message);
-//        mProgressDialog.show();
-//    }
-//
-//    protected void hideDialog() {
-//        if (mProgressDialog != null && mProgressDialog.isShowing())
-//            mProgressDialog.dismiss();
-//    }
 }

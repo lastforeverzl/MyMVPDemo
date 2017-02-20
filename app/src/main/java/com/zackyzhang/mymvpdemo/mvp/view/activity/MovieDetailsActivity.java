@@ -100,7 +100,8 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+//                finish();
+                supportFinishAfterTransition();
             }
         });
     }

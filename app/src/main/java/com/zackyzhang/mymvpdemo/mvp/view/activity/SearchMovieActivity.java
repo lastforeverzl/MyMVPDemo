@@ -19,7 +19,6 @@ import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.di.HasComponent;
 import com.zackyzhang.mymvpdemo.di.component.DaggerMoviesComponent;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
-import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieListFragment;
 import com.zackyzhang.mymvpdemo.mvp.view.fragment.SearchMovieFragment;
 
 import butterknife.BindView;
@@ -99,8 +98,6 @@ public class SearchMovieActivity extends BaseActivity implements HasComponent<Mo
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // TODO: 2/17/17 need to clear the previous search result before new search.
-                Toast.makeText(SearchMovieActivity.this, "submitted", Toast.LENGTH_SHORT).show();
                 SearchMovieFragment fragment = (SearchMovieFragment) getSupportFragmentManager().findFragmentById(R.id.search_fragmentContainer);
                 fragment.searchMovie(query);
                 searchView.clearFocus();

@@ -26,24 +26,8 @@ public class GetUCMovieList extends UseCase<List<NowPlayingMovie>, GetUCMovieLis
 
     @Override
     Observable<List<NowPlayingMovie>> buildUseCaseObservable(Params params) {
-
-        /**
-         *  loading first 2 pages at once.
-         *
-        return Observable.range(1, 2)
-                .concatMap(page -> mMoviesService.movieList(Constants.KEY_API, Constants.API_LANGUAGE, page, ""))
-                .map(listNowPlayingResult -> listNowPlayingResult.getResults());
-        */
         return mMoviesService.ucMovieList(Constants.KEY_API, Constants.API_LANGUAGE, params.page, "US")
                 .map(listNowPlayingResult -> listNowPlayingResult.getResults());
-//                .map(new Function<NowPlayingResult<List<NowPlayingMovie>>, List<NowPlayingMovie>>() {
-//                    @Override
-//                    public List<NowPlayingMovie> apply(NowPlayingResult<List<NowPlayingMovie>> listNowPlayingResult)
-//                            throws Exception {
-//                        return listNowPlayingResult.getResults();
-//                    }
-//                });
-
     }
 
     public static final class Params {

@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.di.HasComponent;
 import com.zackyzhang.mymvpdemo.di.component.DaggerMoviesComponent;
@@ -74,13 +73,12 @@ public class MovieListActivity extends BaseActivity implements HasComponent<Movi
         setSupportActionBar(mToolbar);
 
         mFragments = new ArrayList<>();
-
         mFragments.add(new MovieListFragment());
         mFragments.add(new UCMovieListFragment());
         mFragments.add(new WLMovieListFragment());
         mMovieListPagerAdapter = new MovieListPagerAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mMovieListPagerAdapter);
-        mViewPager.setOffscreenPageLimit(2); // 2 pages that should be retained to either side of the current page
+        mViewPager.setOffscreenPageLimit(2); // 2 pages that should be retained to either side of the current page.
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -92,7 +90,6 @@ public class MovieListActivity extends BaseActivity implements HasComponent<Movi
     @Override
     public void onMovieClicked(int movieId, String backdropPath, View shareView) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("MovieListActivity", shareView.toString());
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MovieListActivity.this, shareView, "shareViewTest");
             this.mNavigator.navigateToMovieDetails(this, movieId, backdropPath, options.toBundle());
         } else {

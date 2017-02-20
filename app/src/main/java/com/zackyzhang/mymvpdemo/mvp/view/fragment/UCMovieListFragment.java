@@ -206,8 +206,8 @@ public class UCMovieListFragment extends BaseFragment implements MovieListView {
     private void setupRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
         mMovieAdapter.setOnItemClickListener(onItemClickListener);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
-        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(context(), 2, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mMovieAdapter);
     }
 

@@ -32,10 +32,8 @@ public class Navigator {
     }
 
     public void navigateToMovieDetails(Context context, int movieId, String backdropImage, Bundle bundle) {
-        // TODO: 2/8/17 animated transition between these two activity.
         if (context != null) {
             Intent intentToLaunch = MovieDetailsActivity.getCallingIntent(context, movieId, backdropImage);
-            Log.d("MovieListActivity", "bundle: " + bundle.toString());
             if (bundle != null) {
                 context.startActivity(intentToLaunch, bundle);
             } else {
