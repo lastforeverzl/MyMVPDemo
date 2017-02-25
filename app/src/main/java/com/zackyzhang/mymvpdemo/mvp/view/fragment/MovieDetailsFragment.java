@@ -3,20 +3,33 @@ package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
+import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieVideos;
+import com.zackyzhang.mymvpdemo.data.local.MoviesPersistenceContract;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieDetailsView;
 import com.zackyzhang.mymvpdemo.mvp.presenter.MovieDetailsPresenter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -24,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 /**
  * Created by lei on 2/8/17.
@@ -45,6 +59,9 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     TextView testView;
     @BindView(R.id.bt_add_to_db)
     TextView addToDbButton;
+
+    private YouTubePlayer youTube;
+    private String videoId;
 
     public static MovieDetailsFragment forMovie(int movieId) {
         MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
@@ -110,18 +127,14 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @Override
     public void renderMovieDetails(MovieEntity movie) {
-        // TODO: 2/9/17 need to finish by UI.
-        if (movie != null) {
-            testView.setText(movie.getHomepage());
-            if (mMovieDetailsPresenter.isExist(movie)) {
-                Log.d(TAG, "movie exist");
-                addToDbButton.setText(R.string.movie_added);
-                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            } else {
-                addToDbButton.setText(R.string.movie_to_add);
-                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            }
+        List<MovieVideos.ResultsBean> movieList = movie.getVideos().getResults();
+        if (!movieList.isEmpty()) {
+            videoId = movieList.get(0).getKey();
         }
+
+        // TODO: 2/9/17 need to finish by UI.
+        loadAddToDbButton(movie);
+        loadHomePage(movie);
     }
 
     @Override
@@ -148,6 +161,54 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         if (mMovieDetailsPresenter != null) {
             mMovieDetailsPresenter.initialize(getCurrentMovieId());
         }
+    }
+
+    private void loadHomePage(MovieEntity movieEntity) {
+        if ((movieEntity != null)) {
+            testView.setText(movieEntity.getHomepage());
+        }
+    }
+
+    private void loadAddToDbButton(MovieEntity movieEntity) {
+        addToDbButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        if (movieEntity != null) {
+            if (mMovieDetailsPresenter.isExist(movieEntity)) {
+                Log.d(TAG, "movie in watchlist");
+                addToDbButton.setText(R.string.movie_added);
+                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            } else {
+                Timber.tag(TAG).d("movie not in watchlist");
+                addToDbButton.setText(R.string.movie_to_add);
+                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }
+        }
+    }
+
+    @Override
+    public void loadYouTubePlayer() {
+        Timber.tag(TAG).d("begin youtube");
+        YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).commit();
+
+        youTubePlayerFragment.initialize(Constants.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                youTube = youTubePlayer;
+                youTube.setShowFullscreenButton(true);
+                youTubePlayer.setFullscreenControlFlags(youTube.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+                if (!b){
+                    youTube.cueVideo(videoId);
+                }
+
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+                Toast.makeText(getActivity(), youTubeInitializationResult.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        Timber.tag(TAG).d("end youtube");
     }
 
     private int getCurrentMovieId() {

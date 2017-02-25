@@ -19,4 +19,6 @@ public class Constants {
     public static final int IMAGE_PLACEHOLDER = R.mipmap.darthvader_icon;
 
     public static final String MOVIE_API_APPEND_TO_RESPONSE = "videos,images";
+
+    public static final String YOUTUBE_API_KEY = "AIzaSyCME63ETsYwNFN2gUd70FjY1HWrDf0J1UU";
 }

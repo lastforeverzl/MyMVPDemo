@@ -1,5 +1,6 @@
 package com.zackyzhang.mymvpdemo.mvp.presenter;
 
+import android.graphics.Movie;
 import android.support.annotation.NonNull;
 
 import com.zackyzhang.mymvpdemo.data.GetMovieDetail;
@@ -109,7 +110,12 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
 
         @Override
         public void onComplete() {
+            MovieDetailsPresenter.this.showYouTubeInView();
             MovieDetailsPresenter.this.hideViewLoading();
         }
+    }
+
+    private void showYouTubeInView() {
+        mMovieDetailsView.loadYouTubePlayer();
     }
 }

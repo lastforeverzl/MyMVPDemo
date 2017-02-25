@@ -9,4 +9,6 @@ import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
 public interface MovieDetailsView extends BaseView {
 
     void renderMovieDetails(MovieEntity movie);
+
+    void loadYouTubePlayer();
 }
