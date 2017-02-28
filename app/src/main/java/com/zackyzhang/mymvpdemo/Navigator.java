@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.youtube.player.YouTubeIntents;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MovieDetailsActivity;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.MovieListActivity;
 import com.zackyzhang.mymvpdemo.mvp.view.activity.SearchMovieActivity;
@@ -45,6 +46,13 @@ public class Navigator {
     public void navigateToSearch(Context context) {
         if (context != null) {
             Intent intentToLaunch = SearchMovieActivity.getCallingIntent(context);
+            context.startActivity(intentToLaunch);
+        }
+    }
+
+    public void navigateToYouTube(Context context, String videoId) {
+        if (context != null) {
+            Intent intentToLaunch = YouTubeIntents.createPlayVideoIntentWithOptions(context, videoId, true, true);
             context.startActivity(intentToLaunch);
         }
     }

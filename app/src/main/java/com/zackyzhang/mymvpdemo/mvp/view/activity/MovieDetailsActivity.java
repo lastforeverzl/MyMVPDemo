@@ -128,6 +128,6 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
 
     @OnClick(R.id.video_button)
     public void click() {
-        startActivity(YouTubeIntents.createPlayVideoIntentWithOptions(this, videoId, true, true));
+        this.mNavigator.navigateToYouTube(this, videoId);
     }
 }
