@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.youtube.player.YouTubeIntents;
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.di.HasComponent;
@@ -19,12 +21,13 @@ import com.zackyzhang.mymvpdemo.mvp.view.fragment.MovieDetailsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by lei on 2/8/17.
  */
 
-public class MovieDetailsActivity extends BaseActivity implements HasComponent<MoviesComponent> {
+public class MovieDetailsActivity extends BaseActivity implements HasComponent<MoviesComponent>, MovieDetailsFragment.VideoListener {
 
     private static final String INTENT_EXTRA_PARAM_MOVIE_ID = "com.zackyzhang.mymvpdemo.INTENT_EXTRA_PARAM_MOVIE_ID";
     private static final String INTENT_EXTRA_PARAM_MOVIE_IMAGE = "com.zackyzhang.mymvpdemo.INTENT_EXTRA_PARAM_MOVIE_IMAGE";
@@ -40,11 +43,14 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
     private int mMovieId;
     private String mMovieImage;
     private MoviesComponent mMoviesComponent;
+    private String videoId;
 
     @BindView(R.id.details_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.test_fragment_detail_image2)
     ImageView testshareView;
+    @BindView(R.id.video_button)
+    Button playVideo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,10 +110,24 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
                 supportFinishAfterTransition();
             }
         });
+        playVideo.setVisibility(View.GONE);
     }
 
     @Override
     public MoviesComponent getComponent() {
         return mMoviesComponent;
+    }
+
+    @Override
+    public void sendVideoId(String videoId) {
+        if (videoId != null) {
+            this.videoId = videoId;
+            playVideo.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.video_button)
+    public void click() {
+        startActivity(YouTubeIntents.createPlayVideoIntentWithOptions(this, videoId, true, true));
     }
 }

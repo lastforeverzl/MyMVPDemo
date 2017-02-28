@@ -110,12 +110,12 @@ public class MovieDetailsPresenter implements Presenter<MovieDetailsView> {
 
         @Override
         public void onComplete() {
-            MovieDetailsPresenter.this.showYouTubeInView();
+//            MovieDetailsPresenter.this.showYouTubeInView();
             MovieDetailsPresenter.this.hideViewLoading();
         }
     }
-
-    private void showYouTubeInView() {
-        mMovieDetailsView.loadYouTubePlayer();
-    }
+//
+//    private void showYouTubeInView() {
+//        mMovieDetailsView.loadYouTubePlayer();
+//    }
 }

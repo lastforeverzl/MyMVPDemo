@@ -10,5 +10,6 @@ public interface MovieDetailsView extends BaseView {
 
     void renderMovieDetails(MovieEntity movie);
 
-    void loadYouTubePlayer();
+    // Create Youtube Player in view
+//    void loadYouTubePlayer();
 }

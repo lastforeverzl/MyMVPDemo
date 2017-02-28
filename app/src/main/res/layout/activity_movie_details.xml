@@ -32,6 +32,13 @@
                 app:layout_collapseParallaxMultiplier="0.5"
                 android:transitionName="shareViewTest"/>
 
+            <Button
+                android:id="@+id/video_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_play_circle"/>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/details_toolbar"
                 android:layout_width="match_parent"

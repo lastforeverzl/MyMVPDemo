@@ -2,6 +2,7 @@ package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -62,6 +63,19 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     private YouTubePlayer youTube;
     private String videoId;
+    private VideoListener mVideoListener;
+
+    public interface VideoListener {
+        void sendVideoId(String videoId);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof VideoListener) {
+            this.mVideoListener = (VideoListener) context;
+        }
+    }
 
     public static MovieDetailsFragment forMovie(int movieId) {
         MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
@@ -130,6 +144,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         List<MovieVideos.ResultsBean> movieList = movie.getVideos().getResults();
         if (!movieList.isEmpty()) {
             videoId = movieList.get(0).getKey();
+            mVideoListener.sendVideoId(videoId);
         }
 
         // TODO: 2/9/17 need to finish by UI.
@@ -184,6 +199,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         }
     }
 
+    /*  create YouTube player in view.
     @Override
     public void loadYouTubePlayer() {
         Timber.tag(TAG).d("begin youtube");
@@ -197,7 +213,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
                 youTube = youTubePlayer;
                 youTube.setShowFullscreenButton(true);
                 youTubePlayer.setFullscreenControlFlags(youTube.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
-                if (!b){
+                if (!b) {
                     youTube.cueVideo(videoId);
                 }
 
@@ -210,6 +226,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         });
         Timber.tag(TAG).d("end youtube");
     }
+    */
 
     private int getCurrentMovieId() {
         Bundle args = getArguments();
