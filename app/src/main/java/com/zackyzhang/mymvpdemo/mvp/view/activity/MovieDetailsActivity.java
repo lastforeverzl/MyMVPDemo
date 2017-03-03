@@ -100,7 +100,7 @@ public class MovieDetailsActivity extends BaseActivity implements HasComponent<M
     }
 
     private void initializeView() {
-        mToolbar.setTitle("MOVIE DETAIL");
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

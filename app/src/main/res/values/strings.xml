@@ -3,4 +3,11 @@
     <string name="movie_to_add">+ ADD TO WATCHLIST</string>
     <string name="movie_added">ADDED TO WATCHLIST</string>
     <string name="search">Search</string>
+    <string name="home_page">Home Page</string>
+    <string name="average_vote">Average Vote</string>
+    <string name="release_date">Release Date</string>
+    <string name="vote_count">Vote Count</string>
+    <string name="genres">Genres</string>
+    <string name="runtime">Runtime</string>
+    <string name="test_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis bibendum pretium ex. Pellentesque sed lobortis enim. Donec nec scelerisque purus. Sed iaculis metus gravida pulvinar efficitur. Vestibulum commodo, nisi eget molestie ornare, neque ante facilisis nisl, a gravida diam mauris ut odio. Pellentesque lacinia orci leo, in interdum eros posuere at. Cras ullamcorper erat eu condimentum fringilla. Morbi aliquet eu mauris sit amet fermentum. Quisque ut vestibulum justo, non sodales leo. Integer rutrum elementum urna et aliquet. Nulla gravida lorem et ipsum hendrerit, vitae lacinia nulla egestas. Integer cursus, leo et pretium facilisis, lacus quam dignissim erat, eu sagittis est magna eu felis. Ut volutpat turpis eu purus accumsan bibendum. Aenean vitae fringilla lorem, commodo condimentum lectus. Donec ultricies viverra lacus.</string>
 </resources>

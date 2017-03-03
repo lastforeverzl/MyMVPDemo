@@ -1,16 +1,21 @@
 package com.zackyzhang.mymvpdemo.mvp.view.fragment;
 
 import android.content.Context;
+import android.graphics.Movie;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -24,13 +29,17 @@ import com.squareup.picasso.Picasso;
 import com.zackyzhang.mymvpdemo.Constants;
 import com.zackyzhang.mymvpdemo.R;
 import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieEntity;
+import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieGenre;
 import com.zackyzhang.mymvpdemo.data.entity.MovieDetails.MovieVideos;
 import com.zackyzhang.mymvpdemo.data.local.MoviesPersistenceContract;
 import com.zackyzhang.mymvpdemo.di.component.MoviesComponent;
 import com.zackyzhang.mymvpdemo.mvp.MovieDetailsView;
 import com.zackyzhang.mymvpdemo.mvp.presenter.MovieDetailsPresenter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -60,6 +69,24 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     TextView testView;
     @BindView(R.id.bt_add_to_db)
     TextView addToDbButton;
+    @BindView(R.id.rating_bar)
+    RatingBar mRatingBar;
+    @BindView(R.id.detail_movie_title)
+    TextView mTitle;
+    @BindView(R.id.detail_movie_overview)
+    TextView mOverview;
+    @BindView(R.id.test_text)
+    TextView mTestText;
+    @BindView(R.id.detail_release_date)
+    TextView mReleaseDate;
+    @BindView(R.id.detail_vote)
+    TextView mVote;
+    @BindView(R.id.detail_vote_count)
+    TextView mVoteCount;
+    @BindView(R.id.detail_genres)
+    TextView mGenres;
+    @BindView(R.id.detail_runtime)
+    TextView mRuntime;
 
     private YouTubePlayer youTube;
     private String videoId;
@@ -148,8 +175,17 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         }
 
         // TODO: 2/9/17 need to finish by UI.
+        mTitle.setText(movie.getOriginalTitle());
+        mOverview.setText(movie.getOverview());
+        mTestText.setText(R.string.test_text);
+        mVote.setText(String.valueOf(movie.getVoteAverage()) + " / 10");
+        mVoteCount.setText(String.valueOf(movie.getVoteCount()));
+        mReleaseDate.setText(movie.getReleaseDate());
+        mRuntime.setText(movie.getRuntime() + " mins");
         loadAddToDbButton(movie);
         loadHomePage(movie);
+        loadRatingBar(movie);
+        loadGenres(movie);
     }
 
     @Override
@@ -184,18 +220,41 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         }
     }
 
+    private void loadGenres(MovieEntity movieEntity) {
+        List<MovieGenre> genreList = movieEntity.getGenres();
+        List genres = new ArrayList();
+        for (MovieGenre genre : genreList) {
+            genres.add(genre.getName());
+        }
+        mGenres.setText(genres.toString().replaceAll("[\\[\\]]", ""));
+    }
+
     private void loadAddToDbButton(MovieEntity movieEntity) {
-        addToDbButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addToDbButton.setVisibility(View.VISIBLE);
         if (movieEntity != null) {
             if (mMovieDetailsPresenter.isExist(movieEntity)) {
-                Log.d(TAG, "movie in watchlist");
-                addToDbButton.setText(R.string.movie_added);
-                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                Timber.tag(TAG).d("movie in watchlist");
+                changeAddToDbButton(true);
             } else {
                 Timber.tag(TAG).d("movie not in watchlist");
-                addToDbButton.setText(R.string.movie_to_add);
-                addToDbButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                changeAddToDbButton(false);
             }
+        }
+    }
+
+    private void loadRatingBar(MovieEntity movieEntity) {
+        if (movieEntity != null) {
+            mRatingBar.setRating((float) movieEntity.getVoteAverage());
+        }
+    }
+
+    private void changeAddToDbButton(boolean movieInDB) {
+        if (movieInDB) {
+            addToDbButton.setText(R.string.movie_added);
+            addToDbButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.notselect_button, null));
+        } else {
+            addToDbButton.setText(R.string.movie_to_add);
+            addToDbButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.selected_button, null));
         }
     }
 
@@ -235,14 +294,16 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @OnClick(R.id.bt_add_to_db)
     public void onClick(Button button) {
+        Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.alpha_anim);
         if (button.getText().toString().equals(getResources().getString(R.string.movie_to_add))) {
             mMovieDetailsPresenter.saveMovieToDB();
-            button.setText(R.string.movie_added);
-            button.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            addToDbButton.startAnimation(anim);
+            changeAddToDbButton(true);
+
         } else {
             mMovieDetailsPresenter.deleteMovieFromDB();
-            button.setText(R.string.movie_to_add);
-            button.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            addToDbButton.startAnimation(anim);
+            changeAddToDbButton(false);
         }
     }
 }
