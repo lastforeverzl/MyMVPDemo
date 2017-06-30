@@ -6,7 +6,7 @@ package com.zackyzhang.mymvpdemo;
 
 public class Constants {
 
-    public static final String KEY_API = "42c604726a221b1df088289d094e53a4";
+    public static final String KEY_API = "<key>";
 
     public static final String MOVIE_DOMAIN = "https://api.themoviedb.org/3/";
 
@@ -20,5 +20,5 @@ public class Constants {
 
     public static final String MOVIE_API_APPEND_TO_RESPONSE = "videos,images";
 
-    public static final String YOUTUBE_API_KEY = "AIzaSyCME63ETsYwNFN2gUd70FjY1HWrDf0J1UU";
+    public static final String YOUTUBE_API_KEY = "<Key>";
 }
